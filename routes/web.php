@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\BookIssueController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -20,17 +22,13 @@ Route::middleware(['auth.check'])->group(function () {
     });
 
     Route::resource('students', StudentController::class);
+    Route::resource('books', BookController::class);
+    Route::get('/issue-book', [BookIssueController::class, 'create'])->name('issue.create');
+    Route::post('/issue-book', [BookIssueController::class, 'store'])->name('issue.store');
+    Route::get('/return-book/{id}', [App\Http\Controllers\BookIssueController::class, 'returnBook'])->name('return.book');
 
-    // Route::resource('library', LibraryController::class);
-    // Route::resource('finance', FinanceController::class);
 });
 
-// Route::get('/students', [StudentController::class, 'index']);
-// Route::get('/students/create', [StudentController::class, 'create']);
-// Route::post('/students', [StudentController::class, 'store']);
-// Route::get('/students/{student}/edit', [StudentController::class, 'edit']);
-// Route::put('/students/{student}', [StudentController::class, 'update']);
-// Route::delete('/students/{student}', [StudentController::class, 'destroy']);
 
 
 

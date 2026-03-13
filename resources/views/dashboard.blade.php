@@ -11,6 +11,7 @@
 
     <div class="list-group">
         <a href="{{ url('/students') }}" class="list-group-item list-group-item-action">Student Management</a>
+        <a href="{{ url('/books') }}" class="list-group-item list-group-item-action">Library Management</a>
     </div>
 </div>
 </body>
