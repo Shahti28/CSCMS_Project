@@ -18,6 +18,7 @@
                 <th>Department</th>
                 <th>Semester</th>
                 <th>Enrollment Status</th>
+                <th>Outstanding Balance</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -30,6 +31,7 @@
                 <td>{{ $student->department }}</td>
                 <td>{{ $student->semester }}</td>
                 <td>{{ $student->enrollment_status }}</td>
+                <td>${{ number_format($student->outstanding_balance, 2) }}</td>
                 <td>
                     <a href="{{ url('/students/'.$student->id.'/edit') }}" class="btn btn-warning btn-sm">Edit</a>
                     <form action="{{ url('/students/'.$student->id) }}" method="POST" style="display:inline-block;">
@@ -37,6 +39,7 @@
                         @method('DELETE')
                         <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
                     </form>
+                    <a href="{{ route('payments.index', ['student_id' => $student->id]) }}" class="btn btn-info btn-sm">View Payments</a>
                 </td>
             </tr>
             @endforeach

@@ -34,6 +34,10 @@
                 <option value="inactive">Inactive</option>
             </select>
         </div>
+        <div class="mb-3">
+            <label>Total Dues</label>
+            <input type="number" step="0.01" name="total_dues" class="form-control" value="0.00">
+        </div>
         <button class="btn btn-success">Save</button>
     </form>
 </div>

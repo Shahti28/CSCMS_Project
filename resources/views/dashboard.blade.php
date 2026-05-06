@@ -12,6 +12,8 @@
     <div class="list-group">
         <a href="{{ url('/students') }}" class="list-group-item list-group-item-action">Student Management</a>
         <a href="{{ url('/books') }}" class="list-group-item list-group-item-action">Library Management</a>
+        <a href="{{ route('payments.index') }}" class="list-group-item list-group-item-action">Payment Management</a>
+        <a href="{{ route('reports.index') }}" class="list-group-item list-group-item-action">Financial Reports</a>
     </div>
 </div>
 </body>

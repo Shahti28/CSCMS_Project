@@ -5,6 +5,8 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookIssueController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReportController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -23,9 +25,13 @@ Route::middleware(['auth.check'])->group(function () {
 
     Route::resource('students', StudentController::class);
     Route::resource('books', BookController::class);
+    Route::resource('payments', PaymentController::class);
     Route::get('/issue-book', [BookIssueController::class, 'create'])->name('issue.create');
     Route::post('/issue-book', [BookIssueController::class, 'store'])->name('issue.store');
     Route::get('/return-book/{id}', [App\Http\Controllers\BookIssueController::class, 'returnBook'])->name('return.book');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/pdf', [ReportController::class, 'generatePdf'])->name('reports.pdf');
+    Route::post('/reports/csv', [ReportController::class, 'generateCsv'])->name('reports.csv');
 
 });
 

@@ -35,6 +35,10 @@
                 <option value="inactive" {{ $student->enrollment_status == 'inactive' ? 'selected' : '' }}>Inactive</option>
             </select>
         </div>
+        <div class="mb-3">
+            <label>Total Dues</label>
+            <input type="number" step="0.01" name="total_dues" class="form-control" value="{{ $student->total_dues }}">
+        </div>
         <button class="btn btn-success">Update</button>
     </form>
 </div>
