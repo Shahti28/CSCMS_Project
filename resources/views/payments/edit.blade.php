@@ -22,10 +22,12 @@
         </div>
         <div class="mb-3">
             <label for="type" class="form-label">Payment Type</label>
-            <select name="type" id="type" class="form-select" required>
-                <option value="tuition" {{ $payment->type == 'tuition' ? 'selected' : '' }}>Tuition Fees</option>
-                <option value="library_fine" {{ $payment->type == 'library_fine' ? 'selected' : '' }}>Library Fine</option>
-                <option value="miscellaneous" {{ $payment->type == 'miscellaneous' ? 'selected' : '' }}>Miscellaneous Fees</option>
+            <select name="payment_type" id="payment_type" class="form-select" required>
+               <option value="tuition" {{ $payment->payment_type == 'tuition' ? 'selected' : '' }}>Tuition Fees</option>
+
+                <option value="library_fine" {{ $payment->payment_type == 'library_fine' ? 'selected' : '' }}>Library Fine</option>
+
+                <option value="miscellaneous" {{ $payment->payment_type == 'miscellaneous' ? 'selected' : '' }}>Miscellaneous Fees</option>
             </select>
         </div>
         <div class="mb-3">
@@ -40,16 +42,16 @@
             <label for="payment_date" class="form-label">Payment Date</label>
             <input type="date" name="payment_date" id="payment_date" class="form-control" value="{{ $payment->payment_date->format('Y-m-d') }}" required>
         </div>
-        <div class="mb-3">
+        <!-- <div class="mb-3">
             <label for="status" class="form-label">Status</label>
             <select name="status" id="status" class="form-select" required>
                 <option value="paid" {{ $payment->status == 'paid' ? 'selected' : '' }}>Paid</option>
                 <option value="pending" {{ $payment->status == 'pending' ? 'selected' : '' }}>Pending</option>
             </select>
-        </div>
+        </div> -->
         <button type="submit" class="btn btn-primary">Update Payment</button>
         <a href="{{ route('payments.index') }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 </body>
-</html>
+</html>resources/views/payments/edit.blade.php

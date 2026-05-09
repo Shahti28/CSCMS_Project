@@ -41,23 +41,22 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
-            'type' => 'required|in:tuition,library_fine,miscellaneous',
+            'payment_type' => 'required|string',
             'amount' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'payment_date' => 'required|date',
-            'status' => 'required|in:paid,pending'
         ]);
 
-        $payment = Payment::create($request->all());
+        $payment = Payment::create($validated);
 
         // Log the transaction
         Log::info('Payment recorded', [
             'payment_id' => $payment->id,
             'student_id' => $payment->student_id,
             'amount' => $payment->amount,
-            'type' => $payment->type,
+            'payment_type' => $payment->payment_type,
             'user_id' => auth()->id()
         ]);
 
@@ -86,16 +85,16 @@ class PaymentController extends Controller
      */
     public function update(Request $request, Payment $payment)
     {
-        $request->validate([
+       $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
-            'type' => 'required|in:tuition,library_fine,miscellaneous',
             'amount' => 'required|numeric|min:0',
+            'payment_type' => 'required|string',
             'description' => 'nullable|string',
             'payment_date' => 'required|date',
-            'status' => 'required|in:paid,pending'
+            // 'status' => 'required|in:paid,pending'
         ]);
 
-        $payment->update($request->all());
+        $payment->update($validated);
 
         return redirect()->route('payments.index')->with('success', 'Payment updated successfully');
     }

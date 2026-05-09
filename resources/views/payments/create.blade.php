@@ -20,7 +20,7 @@
         </div>
         <div class="mb-3">
             <label for="type" class="form-label">Payment Type</label>
-            <select name="type" id="type" class="form-select" required>
+            <select name="payment_type" id="type" class="form-select" required>
                 <option value="tuition">Tuition Fees</option>
                 <option value="library_fine">Library Fine</option>
                 <option value="miscellaneous">Miscellaneous Fees</option>

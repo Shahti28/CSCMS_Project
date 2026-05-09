@@ -36,8 +36,10 @@
             </select>
         </div>
         <div class="mb-3">
-            <label>Total Dues</label>
-            <input type="number" step="0.01" name="total_dues" class="form-control" value="{{ $student->total_dues }}">
+            <label for="total_dues" class="form-label">Total Dues</label>
+            <input type="number" step="0.01" name="total_dues" id="total_dues"
+                class="form-control"
+                value="{{ $student->total_dues }}" required>
         </div>
         <button class="btn btn-success">Update</button>
     </form>

@@ -18,9 +18,9 @@ class Student extends Model
         'total_dues'
     ];
 
-    protected $casts = [
-        'total_dues' => 'decimal:2'
-    ];
+    // protected $casts = [
+    //     'total_dues' => 'decimal:2'
+    // ];
 
     public function payments()
     {
@@ -29,6 +29,6 @@ class Student extends Model
 
     public function getOutstandingBalanceAttribute()
     {
-        return $this->total_dues - $this->payments()->where('status', 'paid')->sum('amount');
+         return $this->total_dues - $this->payments()->sum('amount');
     }
 }

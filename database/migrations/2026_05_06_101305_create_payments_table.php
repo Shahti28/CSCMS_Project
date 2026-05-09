@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['tuition', 'library_fine', 'miscellaneous']);
-            $table->decimal('amount', 10, 2);
-            $table->string('description')->nullable();
-            $table->date('payment_date');
-            $table->enum('status', ['paid', 'pending'])->default('paid');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('payments')) {
+            Schema::create('payments', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('student_id')->constrained()->onDelete('cascade');
+                $table->string('payment_type');
+                $table->decimal('amount', 10, 2);
+                $table->string('description')->nullable();
+                $table->date('payment_date');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

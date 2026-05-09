@@ -29,7 +29,16 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        Student::create($request->all());
+        $validated = $request->validate([
+            'student_id' => 'required',
+            'name' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required',
+            'enrollment_status' => 'required',
+            'total_dues' => 'required|numeric|min:0',
+        ]);
+
+        Student::create($validated);
         return redirect('/students')->with('success', 'Student added successfully');
     }
 
@@ -54,7 +63,16 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        $student->update($request->all());
+        $validated = $request->validate([
+            'student_id' => 'required',
+            'name' => 'required|string',
+            'department' => 'required|string',
+            'semester' => 'required',
+            'enrollment_status' => 'required',
+            'total_dues' => 'required|numeric|min:0',
+        ]);
+
+        $student->update($validated);
         return redirect('/students')->with('success', 'Student updated successfully');
     
     }
