@@ -1,48 +1,72 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Students List</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
-</head>
-<body>
-<div class="container mt-5">
-    <h2>Students List</h2>
-    <a href="{{ url('/students/create') }}" class="btn btn-primary mb-3">Add Student</a>
+@extends('layouts.app')
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Student ID</th>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Semester</th>
-                <th>Enrollment Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($students as $student)
-            <tr>
-                <td>{{ $student->id }}</td>
-                <td>{{ $student->student_id }}</td>
-                <td>{{ $student->name }}</td>
-                <td>{{ $student->department }}</td>
-                <td>{{ $student->semester }}</td>
-                <td>{{ $student->enrollment_status }}</td>
-                <td>
-                    <a href="{{ url('/students/'.$student->id.'/edit') }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ url('/students/'.$student->id) }}" method="POST" style="display:inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+@section('title', 'Students List')
+@section('page_title')
+    <i class="fas fa-user-graduate me-2"></i>Students Management
+@endsection
+
+@section('content')
+<div class="card card-custom">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">All Students</h5>
+        <a href="{{ url('/students/create') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i> Add Student
+        </a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-custom table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Semester</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($students as $student)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td class="fw-semibold">{{ $student->student_id }}</td>
+                        <td>{{ $student->name }}</td>
+                        <td><span class="badge bg-light text-dark border">{{ $student->department }}</span></td>
+                        <td>Semester {{ $student->semester }}</td>
+                        <td>
+                            @php
+                                $statusClass = match(strtolower($student->enrollment_status)) {
+                                    'active' => 'bg-success',
+                                    'inactive' => 'bg-secondary',
+                                    'graduated' => 'bg-info',
+                                    'suspended' => 'bg-danger',
+                                    default => 'bg-primary'
+                                };
+                            @endphp
+                            <span class="badge {{ $statusClass }}">{{ ucfirst($student->enrollment_status) }}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url('/students/'.$student->id.'/edit') }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ url('/students/'.$student->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this student?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-</body>
-</html>
+@endsection
 

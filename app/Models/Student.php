@@ -16,4 +16,14 @@ class Student extends Model
         'semester',
         'enrollment_status'
     ];
+
+    public function bookIssues()
+    {
+        return $this->hasMany(BookIssue::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

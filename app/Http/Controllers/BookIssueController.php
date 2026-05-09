@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\BookIssue;
 use App\Models\Book;
 use App\Models\Student;
+use App\Models\ActivityLog;
 
 class BookIssueController extends Controller
 {
@@ -37,6 +38,14 @@ public function store(Request $request)
         $book->save();
     }
 
+    $student = Student::find($request->student_id);
+    ActivityLog::create([
+        'user' => session('user', 'System'),
+        'action' => 'created',
+        'module' => 'Library',
+        'description' => "Issued book '{$book->title}' to student '{$student->name}'",
+        'ip_address' => $request->ip()
+    ]);
 
     return redirect('/books');
 }
@@ -64,6 +73,13 @@ public function returnBook($id)
         $book->save();
     }
 
+    ActivityLog::create([
+        'user' => session('user', 'System'),
+        'action' => 'updated',
+        'module' => 'Library',
+        'description' => "Book '{$book->title}' returned. Fine: \${$fine}",
+        'ip_address' => request()->ip()
+    ]);
 
     return redirect('/books');
 }
@@ -77,4 +93,3 @@ public function index()
 }
 
 }
-
