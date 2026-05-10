@@ -14,11 +14,25 @@ return new class extends Migration
         if (!Schema::hasTable('payments')) {
             Schema::create('payments', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('student_id')->constrained()->onDelete('cascade');
-                $table->string('payment_type');
+
+                $table->foreignId('student_id')
+                      ->constrained()
+                      ->onDelete('cascade');
+
+                $table->enum('type', [
+                    'tuition',
+                    'library_fine',
+                    'miscellaneous'
+                ])->default('tuition');
+
                 $table->decimal('amount', 10, 2);
-                $table->string('description')->nullable();
-                $table->date('payment_date');
+
+                $table->text('description')->nullable();
+
+                $table->date('payment_date')->nullable();
+
+                $table->string('status')->default('completed');
+
                 $table->timestamps();
             });
         }
