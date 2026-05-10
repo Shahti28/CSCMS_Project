@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use App\Models\BookIssue;
+use Carbon\Carbon;
 
 class StudentController extends Controller
 {
@@ -35,6 +37,22 @@ class StudentController extends Controller
         }
 
         $students = $query->get();
+
+        foreach ($students as $student) {
+        $overdueFine = 0;
+
+        $issues = BookIssue::where('student_id', $student->id)
+            ->whereNull('return_date')
+            ->whereDate('due_date', '<', now())
+            ->get();
+
+        foreach ($issues as $issue) {
+            $daysLate = Carbon::parse($issue->due_date)->diffInDays(now());
+            $overdueFine += $daysLate * 2; // $2 fine per day
+        }
+
+        $student->calculated_balance = $student->outstanding_balance + $overdueFine;
+    }
 
         return view('students.index', compact('students'));
     }

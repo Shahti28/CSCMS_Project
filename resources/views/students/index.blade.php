@@ -14,7 +14,7 @@
         </a>
     </div>
     <div class="card-body p-0">
-        
+
         <div class="p-3 border-bottom">
             <form method="GET" action="{{ route('students.index') }}">
                 <div class="row g-2">
@@ -96,8 +96,8 @@
                             @endphp
                             <span class="badge {{ $statusClass }}">{{ ucfirst($student->enrollment_status) }}</span>
                         </td>
-                        <td class="fw-bold {{ $student->outstanding_balance > 0 ? 'text-danger' : 'text-success' }}">
-                            ${{ number_format($student->outstanding_balance, 2) }}
+                        <td class="fw-bold {{ $student->calculated_balance > 0 ? 'text-danger' : 'text-success' }}">
+                            ${{ number_format($student->calculated_balance, 2) }}
                         </td>
                         <td>
                             <div class="btn-group">
