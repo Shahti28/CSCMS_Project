@@ -24,6 +24,7 @@
                         <th>Department</th>
                         <th>Semester</th>
                         <th>Status</th>
+                        <th>Balance</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -46,6 +47,9 @@
                                 };
                             @endphp
                             <span class="badge {{ $statusClass }}">{{ ucfirst($student->enrollment_status) }}</span>
+                        </td>
+                        <td class="fw-bold {{ $student->outstanding_balance > 0 ? 'text-danger' : 'text-success' }}">
+                            ${{ number_format($student->outstanding_balance, 2) }}
                         </td>
                         <td>
                             <div class="btn-group">

@@ -8,6 +8,7 @@ use App\Http\Controllers\BookIssueController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReportController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -42,6 +43,9 @@ Route::middleware(['auth.check'])->group(function () {
     // Payment Management - Admin and Accountant (Feature 20)
     Route::middleware(['role:admin,accountant'])->group(function () {
         Route::resource('payments', PaymentController::class);
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/pdf', [ReportController::class, 'generatePdf'])->name('reports.pdf');
+        Route::get('/reports/csv', [ReportController::class, 'generateCsv'])->name('reports.csv');
     });
 
     // Activity Logs - Admin only (Feature 19)

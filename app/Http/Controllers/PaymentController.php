@@ -12,10 +12,18 @@ class PaymentController extends Controller
     /**
      * Display a listing of payments.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::with('student')->orderByDesc('created_at')->get();
-        return view('payments.index', compact('payments'));
+        $studentId = $request->get('student_id');
+        $payments = Payment::with('student')
+            ->when($studentId, function ($query) use ($studentId) {
+                return $query->where('student_id', $studentId);
+            })
+            ->orderByDesc('payment_date')
+            ->paginate(10);
+            
+        $students = Student::all();
+        return view('payments.index', compact('payments', 'students', 'studentId'));
     }
 
     /**
@@ -32,11 +40,22 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'type' => 'required|in:tuition,library_fine,miscellaneous',
+            'amount' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'payment_date' => 'required|date',
+            'status' => 'required|in:paid,pending'
+        ]);
+
         Payment::create([
             'student_id' => $request->student_id,
             'type' => $request->type,
             'amount' => $request->amount,
             'description' => $request->description,
+            'payment_date' => $request->payment_date,
+            'status' => $request->status,
         ]);
 
         // Log the activity
@@ -74,6 +93,15 @@ class PaymentController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'type' => 'required|in:tuition,library_fine,miscellaneous',
+            'amount' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'payment_date' => 'required|date',
+            'status' => 'required|in:paid,pending'
+        ]);
+
         $payment = Payment::findOrFail($id);
         $payment->update($request->all());
 

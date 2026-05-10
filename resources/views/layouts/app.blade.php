@@ -46,6 +46,7 @@
 
         @if(in_array(session('role'), ['admin', 'accountant']))
         <a class="nav-link {{ Request::is('payments*') ? 'active' : '' }}" href="{{ url('/payments') }}"><i class="fas fa-money-bill-wave"></i> Payments</a>
+        <a class="nav-link {{ Request::is('reports*') ? 'active' : '' }}" href="{{ route('reports.index') }}"><i class="fas fa-file-invoice-dollar"></i> Financial Reports</a>
         @endif
 
         @if(session('role') === 'admin')

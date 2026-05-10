@@ -14,7 +14,26 @@
             <i class="fas fa-plus me-1"></i> Record Payment
         </a>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body">
+        <form method="GET" action="{{ route('payments.index') }}" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-uppercase">Filter by Student</label>
+                <select name="student_id" class="form-select">
+                    <option value="">All Students</option>
+                    @foreach($students as $student)
+                        <option value="{{ $student->id }}" {{ ($studentId ?? '') == $student->id ? 'selected' : '' }}>
+                            {{ $student->name }} ({{ $student->student_id }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-secondary w-100">
+                    <i class="fas fa-filter me-1"></i> Filter
+                </button>
+            </div>
+        </form>
+
         <div class="table-responsive">
             <table class="table table-custom table-hover mb-0">
                 <thead class="table-light">
@@ -23,8 +42,8 @@
                         <th>Student</th>
                         <th>Type</th>
                         <th>Amount</th>
-                        <th>Description</th>
                         <th>Date</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -45,8 +64,12 @@
                             <span class="badge {{ $typeClass }}">{{ ucfirst(str_replace('_', ' ', $payment->type)) }}</span>
                         </td>
                         <td class="fw-bold text-success">${{ number_format($payment->amount, 2) }}</td>
-                        <td>{{ $payment->description ?? '-' }}</td>
-                        <td>{{ $payment->created_at ? $payment->created_at->format('M d, Y') : 'N/A' }}</td>
+                        <td>{{ $payment->payment_date ? $payment->payment_date->format('M d, Y') : 'N/A' }}</td>
+                        <td>
+                            <span class="badge {{ $payment->status == 'paid' ? 'bg-success' : 'bg-warning' }}">
+                                {{ ucfirst($payment->status) }}
+                            </span>
+                        </td>
                         <td>
                             <div class="btn-group">
                                 <a href="{{ route('payments.edit', $payment->id) }}" class="btn btn-warning btn-sm">
@@ -63,10 +86,14 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="7" class="text-center text-muted py-4">No payment records yet</td></tr>
+                    <tr><td colspan="6" class="text-center text-muted py-4">No payment records yet</td></tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        
+        <div class="mt-4">
+            {{ $payments->links() }}
         </div>
     </div>
 </div>

@@ -13,7 +13,14 @@ class Payment extends Model
         'student_id',
         'type',
         'amount',
-        'description'
+        'description',
+        'payment_date',
+        'status'
+    ];
+
+    protected $casts = [
+        'payment_date' => 'date',
+        'amount' => 'decimal:2'
     ];
 
     public function student()

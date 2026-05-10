@@ -14,7 +14,12 @@ class Student extends Model
         'name',
         'department',
         'semester',
-        'enrollment_status'
+        'enrollment_status',
+        'total_dues'
+    ];
+
+    protected $casts = [
+        'total_dues' => 'decimal:2'
     ];
 
     public function bookIssues()
@@ -25,5 +30,11 @@ class Student extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function getOutstandingBalanceAttribute()
+    {
+        $balance = $this->total_dues - $this->payments()->where('status', 'paid')->sum('amount');
+        return max(0, $balance);
     }
 }

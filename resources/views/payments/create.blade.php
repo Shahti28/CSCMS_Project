@@ -44,6 +44,17 @@
                             <label class="form-label fw-semibold">Description</label>
                             <textarea name="description" class="form-control" rows="3" placeholder="Optional notes..."></textarea>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Payment Date</label>
+                            <input type="date" name="payment_date" class="form-control" required value="{{ date('Y-m-d') }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="paid">Paid</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary px-4">

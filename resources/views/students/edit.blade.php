@@ -45,7 +45,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="col-md-12 mb-4">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Enrollment Status</label>
                             <select name="enrollment_status" class="form-select @error('enrollment_status') is-invalid @enderror" required>
                                 <option value="active" {{ old('enrollment_status', $student->enrollment_status) == 'active' ? 'selected' : '' }}>Active</option>
@@ -56,6 +56,10 @@
                             @error('enrollment_status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-semibold">Total Dues ($)</label>
+                            <input type="number" step="0.01" name="total_dues" class="form-control" value="{{ old('total_dues', $student->total_dues) }}" required>
                         </div>
                     </div>
                     <div class="d-flex gap-2">
