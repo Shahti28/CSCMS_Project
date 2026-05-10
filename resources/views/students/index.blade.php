@@ -14,6 +14,54 @@
         </a>
     </div>
     <div class="card-body p-0">
+        
+        <div class="p-3 border-bottom">
+            <form method="GET" action="{{ route('students.index') }}">
+                <div class="row g-2">
+
+                    <div class="col-md-3">
+                        <input type="text" name="search"
+                            class="form-control"
+                            placeholder="Search by Name or ID"
+                            value="{{ request('search') }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <input type="text" name="department"
+                            class="form-control"
+                            placeholder="Department"
+                            value="{{ request('department') }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <input type="text" name="semester"
+                            class="form-control"
+                            placeholder="Semester"
+                            value="{{ request('semester') }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <select name="enrollment_status" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="active" {{ request('enrollment_status') == 'active' ? 'selected' : '' }}>Active</option>
+                            <option value="inactive" {{ request('enrollment_status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            <option value="graduated" {{ request('enrollment_status') == 'graduated' ? 'selected' : '' }}>Graduated</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Filter
+                        </button>
+
+                        <a href="{{ route('students.index') }}" class="btn btn-secondary">
+                            Reset
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
         <div class="table-responsive">
             <table class="table table-custom table-hover mb-0">
                 <thead>

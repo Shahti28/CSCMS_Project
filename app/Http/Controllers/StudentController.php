@@ -11,9 +11,31 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::all();
+        $query = Student::query();
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('student_id', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('department')) {
+            $query->where('department', $request->department);
+        }
+
+        if ($request->filled('semester')) {
+            $query->where('semester', $request->semester);
+        }
+
+        if ($request->filled('enrollment_status')) {
+            $query->where('enrollment_status', $request->enrollment_status);
+        }
+
+        $students = $query->get();
+
         return view('students.index', compact('students'));
     }
 
