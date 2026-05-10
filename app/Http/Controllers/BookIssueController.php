@@ -54,7 +54,7 @@ public function returnBook($id)
 {
     $issue = BookIssue::findOrFail($id);
 
-    $today = date('Y-m-d');
+    $today = now();
     $issue->return_date = $today;
 
     $fine = 0;

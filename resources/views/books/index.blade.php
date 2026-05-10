@@ -24,6 +24,11 @@
                         <th>ISBN</th>
                         <th>Qty</th>
                         <th>Available</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th>Fine</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -42,6 +47,44 @@
                                 <span class="badge bg-danger">Out of Stock</span>
                             @endif
                         </td>
+                        @php
+                            $latestIssue = $book->issues()->latest()->first();
+                        @endphp
+
+                        <td>
+                            {{ $latestIssue ? $latestIssue->issue_date : 'N/A' }}
+                        </td>
+
+                        <td>
+                            {{ $latestIssue ? $latestIssue->due_date : 'N/A' }}
+                        </td>
+
+                        <td>
+                            @if($latestIssue && $latestIssue->return_date)
+                                {{ \Carbon\Carbon::parse($latestIssue->return_date)->format('M d, Y h:i A') }}
+                            @else
+                                Not Returned
+                            @endif
+                        </td>
+
+                        <td>
+                            @if($latestIssue)
+                                ${{ number_format($latestIssue->fine ?? 0, 2) }}
+                            @else
+                                $0.00
+                            @endif
+                        </td>
+
+                        <td>
+                            @if($latestIssue && $latestIssue->return_date)
+                                <span class="badge bg-success">Returned</span>
+                            @elseif($latestIssue)
+                                <span class="badge bg-warning text-dark">Issued</span>
+                            @else
+                                <span class="badge bg-secondary">Never Issued</span>
+                            @endif
+                        </td>
+                        
                         <td>
                             <div class="btn-group">
                                 <a href="{{ route('books.edit', $book->id) }}" class="btn btn-warning btn-sm" title="Edit">
