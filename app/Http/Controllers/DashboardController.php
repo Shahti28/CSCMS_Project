@@ -31,7 +31,7 @@ class DashboardController extends Controller
 
         // Monthly payment trends for chart (Feature 17)
         $paymentTrends = Payment::select(
-                DB::raw("strftime('%Y-%m', created_at) as month"),
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
                 DB::raw('SUM(amount) as total')
             )
             ->groupBy('month')
@@ -41,7 +41,7 @@ class DashboardController extends Controller
 
         // Monthly library usage trends (Feature 17)
         $libraryTrends = BookIssue::select(
-                DB::raw("strftime('%Y-%m', issue_date) as month"),
+                DB::raw("DATE_FORMAT(issue_date, '%Y-%m') as month"),
                 DB::raw('COUNT(*) as total')
             )
             ->groupBy('month')
