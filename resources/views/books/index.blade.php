@@ -24,10 +24,6 @@
                         <th>ISBN</th>
                         <th>Qty</th>
                         <th>Available</th>
-                        <th>Issue Date</th>
-                        <th>Due Date</th>
-                        <th>Return Date</th>
-                        <th>Fine</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -41,47 +37,26 @@
                         <td><small class="text-muted">{{ $book->isbn }}</small></td>
                         <td>{{ $book->quantity }}</td>
                         <td>
-                            @if($book->available_quantity > 0)
+                            @if($book->status == 'reserved')
+                                <span class="badge bg-info text-white">Reserved</span>
+                            @elseif($book->status == 'issued')
+                                <span class="badge bg-warning text-dark">Issued</span>
+                            @elseif($book->available_quantity > 0)
                                 <span class="badge bg-success">{{ $book->available_quantity }} Available</span>
                             @else
                                 <span class="badge bg-danger">Out of Stock</span>
                             @endif
                         </td>
-                        @php
-                            $latestIssue = $book->issues()->latest()->first();
-                        @endphp
 
                         <td>
-                            {{ $latestIssue ? $latestIssue->issue_date : 'N/A' }}
-                        </td>
-
-                        <td>
-                            {{ $latestIssue ? $latestIssue->due_date : 'N/A' }}
-                        </td>
-
-                        <td>
-                            @if($latestIssue && $latestIssue->return_date)
-                                {{ \Carbon\Carbon::parse($latestIssue->return_date)->format('M d, Y h:i A') }}
-                            @else
-                                Not Returned
-                            @endif
-                        </td>
-
-                        <td>
-                            @if($latestIssue)
-                                ${{ number_format($latestIssue->fine ?? 0, 2) }}
-                            @else
-                                $0.00
-                            @endif
-                        </td>
-
-                        <td>
-                            @if($latestIssue && $latestIssue->return_date)
-                                <span class="badge bg-success">Returned</span>
-                            @elseif($latestIssue)
+                            @if($book->status == 'reserved')
+                                <span class="badge bg-info text-white">Reserved</span>
+                            @elseif($book->status == 'issued')
                                 <span class="badge bg-warning text-dark">Issued</span>
+                            @elseif($book->status == 'available')
+                                <span class="badge bg-success">Available</span>
                             @else
-                                <span class="badge bg-secondary">Never Issued</span>
+                                <span class="badge bg-secondary">Unknown</span>
                             @endif
                         </td>
                         
@@ -91,20 +66,10 @@
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 
-                                @if($book->available_quantity > 0)
+                                @if($book->available_quantity > 0 && $book->status === 'available')
                                 <a href="{{ route('issue.create', ['book_id' => $book->id]) }}" class="btn btn-info btn-sm text-white" title="Issue Book">
                                     <i class="fas fa-book-reader"></i>
                                 </a>
-                                @endif
-
-                                @php
-                                    $activeIssue = $book->issues()->whereNull('return_date')->latest()->first();
-                                @endphp
-
-                                @if($activeIssue)
-                                    <a href="{{ url('/return-book/'.$activeIssue->id) }}" class="btn btn-success btn-sm" title="Return">
-                                        <i class="fas fa-undo"></i>
-                                    </a>
                                 @endif
 
                                 <form action="{{ route('books.destroy', $book->id) }}" method="POST" class="d-inline">

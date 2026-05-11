@@ -38,21 +38,8 @@ class StudentController extends Controller
 
         $students = $query->get();
 
-        foreach ($students as $student) {
-        $overdueFine = 0;
-
-        $issues = BookIssue::where('student_id', $student->id)
-            ->whereNull('return_date')
-            ->whereDate('due_date', '<', now())
-            ->get();
-
-        foreach ($issues as $issue) {
-            $daysLate = Carbon::parse($issue->due_date)->diffInDays(now());
-            $overdueFine += $daysLate * 2; // $2 fine per day
-        }
-
-        $student->calculated_balance = $student->outstanding_balance + $overdueFine;
-    }
+        // The calculated_balance is now handled by the Student model accessor
+        // which includes both recorded total_dues and live accrued fines.
 
         return view('students.index', compact('students'));
     }

@@ -41,7 +41,8 @@
 
         @if(in_array(session('role'), ['admin', 'librarian']))
         <a class="nav-link {{ Request::is('books*') ? 'active' : '' }}" href="{{ url('/books') }}"><i class="fas fa-book"></i> Library</a>
-        <a class="nav-link {{ Request::is('issue*') ? 'active' : '' }}" href="{{ route('issue.create') }}"><i class="fas fa-book-reader"></i> Issue Book</a>
+        <a class="nav-link {{ Request::is('issue-records*') ? 'active' : '' }}" href="{{ route('issue.index') }}"><i class="fas fa-history"></i> Issue Records</a>
+        <a class="nav-link {{ Request::is('issue-book*') ? 'active' : '' }}" href="{{ route('issue.create') }}"><i class="fas fa-book-reader"></i> Issue Book</a>
         @endif
 
         @if(in_array(session('role'), ['admin', 'accountant']))

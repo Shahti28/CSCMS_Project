@@ -34,6 +34,22 @@
             </div>
         </form>
 
+        @if($studentId)
+            @php $selectedStudent = $students->find($studentId); @endphp
+            @if($selectedStudent)
+            <div class="alert alert-info border-0 shadow-sm d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h6 class="mb-1 text-uppercase small fw-bold">Student Balance Overview</h6>
+                    <p class="mb-0">Current outstanding balance for <strong>{{ $selectedStudent->name }}</strong></p>
+                </div>
+                <div class="text-end">
+                    <h4 class="mb-0 text-danger fw-bold">${{ number_format($selectedStudent->calculated_balance, 2) }}</h4>
+                    <small class="text-muted">Including recorded dues and accrued fines</small>
+                </div>
+            </div>
+            @endif
+        @endif
+
         <div class="table-responsive">
             <table class="table table-custom table-hover mb-0">
                 <thead class="table-light">

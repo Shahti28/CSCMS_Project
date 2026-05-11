@@ -14,13 +14,21 @@ class BookIssueController extends Controller
 public function create()
 {
     $students = Student::all();
-    $books = Book::where('available_quantity','>',0)->get();
+    $books = Book::where('available_quantity','>',0)
+                 ->where('status', 'available')
+                 ->get();
 
     return view('book_issues.create', compact('students','books'));
 }
 
 public function store(Request $request)
 {
+    $book = Book::findOrFail($request->book_id);
+
+    // Validate BEFORE creating issue record
+    if ($book->status !== 'available' || $book->available_quantity <= 0) {
+        return redirect()->back()->with('error', 'This book is not available for issuing.');
+    }
 
     $issueDate = $request->issue_date;
     $dueDate = date('Y-m-d', strtotime($issueDate . ' +7 days'));
@@ -32,11 +40,11 @@ public function store(Request $request)
         'due_date' => $dueDate
     ]);
 
-    $book = Book::find($request->book_id);
-    if ($book->available_quantity > 0) {
-        $book->available_quantity -= 1;
-        $book->save();
+    $book->available_quantity -= 1;
+    if ($book->status !== 'reserved' && $book->available_quantity == 0) {
+        $book->status = 'issued';
     }
+    $book->save();
 
     $student = Student::find($request->student_id);
     ActivityLog::create([
@@ -54,22 +62,39 @@ public function returnBook($id)
 {
     $issue = BookIssue::findOrFail($id);
 
-    $today = now();
-    $issue->return_date = $today;
+    $today = \Carbon\Carbon::now()->startOfDay();
+    $dueDate = \Carbon\Carbon::parse($issue->due_date)->startOfDay();
+    $issue->return_date = now();
 
+    // Calculate fine: $2 per day late
     $fine = 0;
-
-    if (strtotime($today) > strtotime($issue->due_date)) {
-        $daysLate = floor((strtotime($today) - strtotime($issue->due_date)) / (60*60*24));
-        $fine = $daysLate * 2; // fine per day
+    if ($today->gt($dueDate)) {
+        // Use dueDate->diffInDays(today) to always get a positive number
+        $daysLate = (int) $dueDate->diffInDays($today);
+        $fine = $daysLate * 2;
     }
 
     $issue->fine = $fine;
     $issue->save();
 
+    // Log the fine (balance is computed dynamically from book_issues table)
+    if ($fine > 0) {
+        $student = Student::find($issue->student_id);
+        ActivityLog::create([
+            'user' => session('user', 'System'),
+            'action' => 'updated',
+            'module' => 'Finance',
+            'description' => "Library fine of \${$fine} recorded for '{$student->name}' (Book return)",
+            'ip_address' => request()->ip()
+        ]);
+    }
+
     $book = Book::findOrFail($issue->book_id);
     if ($book->available_quantity < $book->quantity) {
         $book->available_quantity += 1;
+        if ($book->status !== 'reserved' && $book->available_quantity > 0) {
+            $book->status = 'available';
+        }
         $book->save();
     }
 
@@ -81,15 +106,14 @@ public function returnBook($id)
         'ip_address' => request()->ip()
     ]);
 
-    return redirect('/books');
+    return redirect()->route('issue.index');
 }
 
 public function index()
 {
-    
-    $books = Book::with('issues')->get();
+    $issues = BookIssue::with(['student', 'book'])->latest()->get();
 
-    return view('books.index', compact('books'));
+    return view('book_issues.index', compact('issues'));
 }
 
 }

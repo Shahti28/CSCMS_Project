@@ -35,6 +35,7 @@ Route::middleware(['auth.check'])->group(function () {
     // Library Management - Admin and Librarian (Feature 20)
     Route::middleware(['role:admin,librarian'])->group(function () {
         Route::resource('books', BookController::class);
+        Route::get('/issue-records', [BookIssueController::class, 'index'])->name('issue.index');
         Route::get('/issue-book', [BookIssueController::class, 'create'])->name('issue.create');
         Route::post('/issue-book', [BookIssueController::class, 'store'])->name('issue.store');
         Route::get('/return-book/{id}', [BookIssueController::class, 'returnBook'])->name('return.book');

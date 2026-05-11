@@ -22,6 +22,16 @@ class BookController extends Controller
             
             if ($book->available_quantity !== $correctAvailable) {
                 $book->available_quantity = $correctAvailable;
+                
+                // Keep status consistent during self-healing
+                if ($book->status !== 'reserved') {
+                    if ($correctAvailable === 0) {
+                        $book->status = 'issued';
+                    } else {
+                        $book->status = 'available';
+                    }
+                }
+                
                 $book->save();
             }
         }
