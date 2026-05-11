@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\Student;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use App\Models\BookIssue;
 
 class PaymentController extends Controller
 {
@@ -49,7 +50,7 @@ class PaymentController extends Controller
             'status' => 'required|in:paid,pending'
         ]);
 
-        Payment::create([
+        $payment = Payment::create([
             'student_id' => $request->student_id,
             'type' => $request->type,
             'amount' => $request->amount,
@@ -57,6 +58,31 @@ class PaymentController extends Controller
             'payment_date' => $request->payment_date,
             'status' => $request->status,
         ]);
+
+        if ($request->type === 'library_fine' && $request->status === 'paid') {
+            $remainingPayment = $request->amount;
+
+            $issues = BookIssue::where('student_id', $request->student_id)
+                ->where('fine', '>', 0)
+                ->orderBy('return_date')
+                ->get();
+
+            foreach ($issues as $issue) {
+                if ($remainingPayment <= 0) {
+                    break;
+                }
+
+                if ($remainingPayment >= $issue->fine) {
+                    $remainingPayment -= $issue->fine;
+                    $issue->fine = 0;
+                } else {
+                    $issue->fine -= $remainingPayment;
+                    $remainingPayment = 0;
+                }
+
+                $issue->save();
+            }
+        }
 
         // Log the activity
         ActivityLog::create([

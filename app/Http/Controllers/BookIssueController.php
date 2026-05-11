@@ -7,6 +7,7 @@ use App\Models\BookIssue;
 use App\Models\Book;
 use App\Models\Student;
 use App\Models\ActivityLog;
+use App\Models\Payment;
 
 class BookIssueController extends Controller
 {
@@ -111,7 +112,36 @@ public function returnBook($id)
 
 public function index()
 {
-    $issues = BookIssue::with(['student', 'book'])->latest()->get();
+    $issues = BookIssue::with(['student', 'book'])
+        ->orderBy('student_id')
+        ->orderBy('due_date')
+        ->get();
+
+    $paidLibraryFines = Payment::where('type', 'library_fine')
+        ->where('status', 'paid')
+        ->selectRaw('student_id, SUM(amount) as total_paid')
+        ->groupBy('student_id')
+        ->pluck('total_paid', 'student_id');
+
+    $remainingPaidByStudent = [];
+
+    foreach ($issues as $issue) {
+        $studentId = $issue->student_id;
+
+        if (!isset($remainingPaidByStudent[$studentId])) {
+            $remainingPaidByStudent[$studentId] = $paidLibraryFines[$studentId] ?? 0;
+        }
+
+        $fine = $issue->fine ?? 0;
+
+        if ($remainingPaidByStudent[$studentId] >= $fine) {
+            $issue->remaining_fine = 0;
+            $remainingPaidByStudent[$studentId] -= $fine;
+        } else {
+            $issue->remaining_fine = $fine - $remainingPaidByStudent[$studentId];
+            $remainingPaidByStudent[$studentId] = 0;
+        }
+    }
 
     return view('book_issues.index', compact('issues'));
 }

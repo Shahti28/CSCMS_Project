@@ -54,19 +54,22 @@
                         </td>
                         <td>
                             @php
-                                $displayFine = $issue->fine;
-                                $isPending = false;
-                                if (!$issue->return_date) {
-                                    $today = \Carbon\Carbon::now()->startOfDay();
-                                    $dueDate = \Carbon\Carbon::parse($issue->due_date)->startOfDay();
-                                    if ($today->gt($dueDate)) {
-                                        $displayFine = (int) $dueDate->diffInDays($today) * 2;
-                                        $isPending = true;
-                                    }
+                                $today = \Carbon\Carbon::now()->startOfDay();
+                                $dueDate = \Carbon\Carbon::parse($issue->due_date)->startOfDay();
+
+                                if ($today->gt($dueDate)) {
+                                    $calculatedFine = (int) $dueDate->diffInDays($today) * 2;
+                                } else {
+                                    $calculatedFine = 0;
                                 }
+
+                                $displayFine = $issue->return_date ? ($issue->remaining_fine ?? $issue->fine ?? 0) : $calculatedFine;
+                                $isPending = !$issue->return_date && $displayFine > 0;
                             @endphp
+
                             <span class="fw-bold {{ $displayFine > 0 ? 'text-danger' : 'text-success' }}">
                                 ${{ number_format($displayFine, 2) }}
+
                                 @if($isPending)
                                     <small class="d-block text-muted" style="font-size: 0.65rem;">(Accrued)</small>
                                 @endif
